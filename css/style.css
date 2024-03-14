@@ -1,6 +1,8 @@
 *{
     padding: 0;
     margin: 0;
+    font-family: "M PLUS Code Latin", monospace;
+    color: white;
 }
 
 #nav-container{
@@ -13,17 +15,40 @@
 #nav-container img{
     width: 15vh;
     height: auto;
-
 }
 
 .canvas-div{
+    text-align: center;
+    background-image: url("../fondo_def.png");
+    background-repeat: repeat;
     background-color: #3D3D3D;
     width: auto;
     height: 75vh;
+}
+
+canvas {
+    border-width: 2px;
+    border-style: outset;
+    border-color: aliceblue;
+    border-radius: 5px;
 }
 
 .main-footer{
     background-color: #2D2D2D;
     width: auto;
     height: 10vh;
+}
+
+#containsocials{
+    text-align: center;
+    display: block;
+}
+
+.socials{
+    max-width: 2.25%;
+}
+
+#otherlinks{
+    text-align: right;
+    display: block;
 }
