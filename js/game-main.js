@@ -182,6 +182,9 @@ const keys = {
 }
 
 let frames = 0
+let intervalos = Math.floor(Math.random() * 500 + 500)
+
+
 function animate() {
     requestAnimationFrame(animate) //Este metodo nos permite dibujar continuamente el sprite del jugador 
     c.fillStyle = 'black'
@@ -217,10 +220,13 @@ function animate() {
         jugador.rotacion = 0
     }
 
-    if ((frames % (Math.random() * 500)) + 500 === 0){
+    if (frames % intervalos === 0){
         grids.push(new Grid())
+        intervalos = Math.floor(Math.random() * 500 + 500)
+        console.log(intervalos)
     }
     frames ++
+    
 }
 animate()
 
