@@ -62,7 +62,7 @@ class Proyectil {
     constructor({ posicion, velocidad }) {
         this.posicion = posicion,
             this.velocidad = velocidad,
-            this.radius = 3
+            this.radius = 4
     }
     draw() {
         c.beginPath()
@@ -113,7 +113,7 @@ class Enemigo { //Clase que contendra todos los atributos del jugador
 
     }
 
-    update({velocidad}) {
+    update({ velocidad }) {
         if (this.img) {
             this.draw()
             this.posicion.x += velocidad.x
@@ -129,7 +129,7 @@ class Grid {
             y: 0
         }
         this.velocidad = {
-            x: 2,
+            x: .8,
             y: 0
         }
 
@@ -157,8 +157,8 @@ class Grid {
         this.posicion.y += this.velocidad.y
 
         this.velocidad.y = 0
-        if(this.posicion.x + this.width >= canvas.width || this.
-            posicion.x <= 0 ){
+        if (this.posicion.x + this.width >= canvas.width || this.
+            posicion.x <= 0) {
             this.velocidad.x = -this.velocidad.x
             this.velocidad.y = 30
         }
@@ -182,7 +182,7 @@ const keys = {
 }
 
 let frames = 0
-let intervalos = Math.floor(Math.random() * 500 + 500)
+let intervalos = Math.floor(Math.random() * 800 + 800)
 
 
 function animate() {
@@ -201,10 +201,47 @@ function animate() {
         }
     })
 
-    grids.forEach(grid => {
+    grids.forEach((grid, gridIndex) => {
         grid.update()
-        grid.enemigos.forEach(enemigo => {
-            enemigo.update({velocidad: grid.velocidad})
+        grid.enemigos.forEach((enemigo, i) => {
+            enemigo.update({ velocidad: grid.velocidad })
+            proyectiles.forEach((proyectil, j) => {
+                if (
+                    proyectil.posicion.y - proyectil.radius <=
+                    enemigo.posicion.y + enemigo.height &&
+                    proyectil.posicion.x + proyectil.radius >=
+                    enemigo.posicion.x &&
+                    proyectil.posicion.x - proyectil.radius <=
+                    enemigo.posicion.x + enemigo.width &&
+                    proyectil.posicion.y + proyectil.radius >=
+                    enemigo.posicion.y
+                ) {
+                    setTimeout(() => {
+                        const enemigoEncontrado = grid.enemigos.find(enemigo2 =>
+                            enemigo2 === enemigo
+                        )
+                        const proyectilEncontrado = proyectiles.find(projectil2 =>
+                            projectil2 === proyectil
+                        )
+                        //Remover enemigos y proyectiles
+                        if (enemigoEncontrado && proyectilEncontrado) {
+                            grid.enemigos.splice(i, 1)
+                            proyectiles.splice(j, 1)
+                            if (grid.enemigos.length > 0) {
+                                const primerEnemigo = grid.enemigos[0]
+                                const ultimoEnemigo = grid.enemigos[grid.
+                                    enemigos.length - 1]
+
+                                grid.width = ultimoEnemigo.posicion.x -
+                                    primerEnemigo.posicion.x + ultimoEnemigo.width
+                                grid.posicion.x = primerEnemigo.posicion.x
+                            } else {
+                                grids.splice(gridIndex, 1)
+                            }
+                        }
+                    }, 0)
+                }
+            })
         })
     })
 
@@ -220,13 +257,14 @@ function animate() {
         jugador.rotacion = 0
     }
 
-    if (frames % intervalos === 0){
+    if (frames % intervalos === 0) {
         grids.push(new Grid())
-        intervalos = Math.floor(Math.random() * 500 + 500)
+        intervalos = Math.floor(Math.random() * 800 + 800)
+        frames = 0
         console.log(intervalos)
     }
-    frames ++
-    
+    frames++
+
 }
 animate()
 
