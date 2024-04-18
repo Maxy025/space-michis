@@ -2,15 +2,15 @@
     padding: 0;
     margin: 0;
     font-family: "M PLUS Code Latin", monospace;
-    
-
 }
 
 #nav-container{
+    position: relative;
     background-color: #573252;
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 1;
 }
 
 #nav-container img{
@@ -18,20 +18,21 @@
   margin: 0 auto;
   max-width: 100%;
   width: 13%;
-
+  z-index: 1;
 }
 
 .canvas-div{
     text-align: center;
-    background-image: url("../fondo_def.png");
+    /*background-image: url("../fondo_def.png");
     background-repeat: repeat;
-    background-color: #3D3D3D;
+    background-color: #3D3D3D;*/
     width: 100%;
     height: auto;
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 0 auto;
+    
 }
 
 canvas {
@@ -41,17 +42,20 @@ canvas {
     border-radius: 5px;
     margin-top: 22px;
     margin-bottom: 22px;
+    z-index: 1;
 }
 
 .main-footer{
     background-color: #2D2D2D;
     width: auto;
     height: 100%;
+    z-index: 1;
 }
 
 #containsocials{
     text-align: center;
     display: block;
+    z-index: 1;
 }
 
 .socials{
@@ -61,4 +65,14 @@ canvas {
 #otherlinks{
     text-align: right;
     display: block;
+    z-index: 1;
+}
+
+#myVideo{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    min-width: 100%; 
+    min-height: 100%;
+    z-index: 0;
 }
