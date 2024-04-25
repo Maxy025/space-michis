@@ -140,7 +140,7 @@ class Proyectil {
 
         c.arc(this.posicion.x, this.posicion.y, this.radius, 0, Math.PI * 2)
 
-        c.fillStyle = 'red'
+        c.fillStyle = 'blue'
 
         c.fill()
 
@@ -162,11 +162,41 @@ class Proyectil {
 
 
 
+class Particulas {
 
+    constructor({ posicion, velocidad, radio, color }) {
+        this.posicion = posicion
+        this.velocidad = velocidad
+
+        this.radio = radio
+        this.color = color
+        this.opacidad = 1
+    }
+
+    draw() {
+        
+        c.save()
+        c.globalAlpha = this.opacity
+        c.beginPath()
+        c.arc(this.posicion.x, this.posicion.y, this.radio, 0, Math.PI * 2)
+        c.fillStyle = this.color
+        c.fill()
+        c.closePath()
+        c.restore()
+    }
+
+    update() {
+        this.draw()
+        this.posicion.x += this.velocidad.x
+        this.posicion.y += this.velocidad.y
+        this.opacidad -= 0.01
+    }
+
+}
 
 class ProyectilEnemigo {
 
-    constructor({posicion, velocidad}){
+    constructor({ posicion, velocidad }) {
 
         this.posicion = posicion
 
@@ -210,41 +240,41 @@ class ProyectilEnemigo {
 
 class Enemigo {
 
-    constructor({posicion}) {
+    constructor({ posicion }) {
 
-      this.velocidad = {
+        this.velocidad = {
 
-        x: 0,
+            x: 0,
 
-        y: 0
+            y: 0
 
-      }
+        }
 
 
 
-      const img = new Image()
+        const img = new Image()
 
-      img.src = 'img/badmouse.png'
+        img.src = 'img/badmouse.png'
 
-      img.onload = () => {
+        img.onload = () => {
 
-        const scale = .03
+            const scale = .03
 
-        this.img = img
+            this.img = img
 
-        this.width = img.width * scale
+            this.width = img.width * scale
 
-        this.height = img.height * scale
+            this.height = img.height * scale
 
-        this.posicion = {
+            this.posicion = {
 
-            x: posicion.x,
+                x: posicion.x,
 
-            y: posicion.y
+                y: posicion.y
 
-          }
+            }
 
-     }
+        }
 
     }
 
@@ -252,29 +282,29 @@ class Enemigo {
 
     draw() {
 
-       // c.fillStyle = 'red'
+        // c.fillStyle = 'red'
 
-       // c.fillRect(this.position.x, this.position.y, this.width, this.height)
+        // c.fillRect(this.position.x, this.position.y, this.width, this.height)
 
-     
+
 
         c.drawImage(
 
-                this.img,
+            this.img,
 
-                this.posicion.x,
+            this.posicion.x,
 
-                this.posicion.y,
+            this.posicion.y,
 
-                this.width,
+            this.width,
 
-                this.height
+            this.height
 
         )
 
     }
 
-    update({velocidad}) {
+    update({ velocidad }) {
 
         if (this.img) {
 
@@ -290,7 +320,7 @@ class Enemigo {
 
 
 
-    shoot(enemigoProyectil){
+    shoot(enemigoProyectil) {
 
         enemigoProyectil.push(new ProyectilEnemigo({
 
@@ -410,6 +440,7 @@ const grids = []
 
 const proyectilesEnemigo = []
 
+const particulas = []
 
 
 const keys = {
@@ -441,7 +472,22 @@ let frames = 0
 let intervalos = Math.floor(Math.random() * 800 + 800)
 
 
-
+function creacionParticulas({ object, color }) {
+    for (let i = 0; i < 15; i++) {
+        particulas.push(new Particulas({
+            posicion:{
+                x: object.posicion.x + object.width /2, 
+                y: object.posicion.y + object.height /2
+            }, 
+            velocidad: {
+                x: (Math.random() - 0.5) * 2,
+                y: (Math.random() - 0.5) * 2
+            },
+            radio: Math.random() * 3,
+            color: color || '#48CAE4',
+        }))
+    }
+}
 
 
 function animate() {
@@ -454,14 +500,45 @@ function animate() {
 
     jugador.update()//Lo dibujamos en el canvas
 
-
-
-    proyectilesEnemigo.forEach(proyectilEnemigo => {
-
-        proyectilEnemigo.update()
-
+    particulas.forEach((particula, i) => {
+        if(particula.opacidad <= 0){
+            setTimeout(()=>{
+                particulas.splice(i, 1)
+            }, 0)
+        }else {
+            particula.update()
+        }
     })
 
+    proyectilesEnemigo.forEach((proyectilEnemigo, index) => {
+        if (proyectilEnemigo.posicion.y + proyectilEnemigo.height >=
+            canvas.height) {
+            setTimeout(() => {
+
+                proyectilesEnemigo.splice(index, 1)
+
+            }, 0)
+        } else proyectilEnemigo.update()
+
+        //El proyectil enemigo golpea al jugador
+        if (proyectilEnemigo.posicion.y + proyectilEnemigo.height >=
+            jugador.posicion.y && proyectilEnemigo.posicion.x + proyectilEnemigo.width >=
+            jugador.posicion.x && proyectilEnemigo.posicion.x <= jugador.posicion.x +
+            jugador.width) {
+
+                setTimeout(() => {
+
+                    proyectilesEnemigo.splice(index, 1)
+    
+                }, 0)
+            console.log("You lose")
+            creacionParticulas({
+                object: jugador,
+                color: 'white'
+            })
+
+        }
+    })
 
 
     proyectiles.forEach((proyectil, index) => {
@@ -506,6 +583,7 @@ function animate() {
 
             enemigo.update({ velocidad: grid.velocidad })
 
+            //Projectil impacta enemigo
             proyectiles.forEach((proyectil, j) => {
 
                 if (
@@ -528,6 +606,7 @@ function animate() {
 
                 ) {
 
+
                     setTimeout(() => {
 
                         const enemigoEncontrado = grid.enemigos.find(enemigo2 =>
@@ -543,8 +622,11 @@ function animate() {
                         )
 
                         //Remover enemigos y proyectiles
-
                         if (enemigoEncontrado && proyectilEncontrado) {
+                            
+                            creacionParticulas({
+                                object: enemigo
+                            })
 
                             grid.enemigos.splice(i, 1)
 
