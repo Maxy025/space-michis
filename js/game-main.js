@@ -66,6 +66,8 @@ class Proyectil {
         this.posicion = posicion
         this.velocidad = velocidad
         this.radius = 4
+
+        
     }
     draw() {
         c.beginPath()
@@ -455,6 +457,7 @@ addEventListener('keydown', ({ key }) => {
             keys.d.presionado = true
             break
         case ' ':
+            if (keys.space.presionado) return
             proyectiles.push(new Proyectil({
                 posicion: {
                     x: jugador.posicion.x + jugador.width / 2,
