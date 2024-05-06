@@ -1,0 +1,36 @@
+// models/jugador.js
+const { DataTypes } = require('sequelize');
+const sequelize = require('../sequelize'); // Import Sequelize instance
+
+const Puntaje = sequelize.define('puntaje', {
+    id_puntaje: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+    },
+    puntaje: {
+        type: DataTypes.STRING,
+        allowNull: false,
+
+    },
+    fecha_registro: {
+        type: DataTypes.DATE,
+        allowNull: false,
+    },
+    id_jugador: {
+        type: DataTypes.INTEGER,
+
+        references: {
+            model: User,
+            key: 'id_jugador',
+            deferrable: Deferrable.INITIALLY_IMMEDIATE,
+            // Options:
+            // - `Deferrable.INITIALLY_IMMEDIATE` - Immediately check the foreign key constraints
+            // - `Deferrable.INITIALLY_DEFERRED` - Defer all foreign key constraint check to the end of a transaction
+            // - `Deferrable.NOT` - Don't defer the checks at all (default) - This won't allow you to dynamically change the rule in a transaction
+        },
+    },
+
+});
+
+module.exports = Puntaje;
