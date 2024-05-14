@@ -67,7 +67,7 @@ class Proyectil {
         this.velocidad = velocidad
         this.radius = 4
 
-        
+
     }
     draw() {
         c.beginPath()
@@ -184,7 +184,7 @@ class Enemigo {
             },
             velocidad: {
                 x: 0,
-                y: 5
+                y: 1
             }
         }))
     }
@@ -224,7 +224,7 @@ class Grid {
         this.velocidad.y = 0
         if (this.posicion.x + this.width >= canvas.width || this.
             posicion.x <= 0) {
-            this.velocidad.x = -this.velocidad.x
+            this.velocidad.x = -this.velocidad.x * 1.25
             this.velocidad.y = 30
         }
     }
@@ -289,9 +289,40 @@ function creacionParticulas({ object, color, desvanecido }) {
     }
 }
 
+function colisionRectangular({
+    rectangulo1,
+    rectangulo2
+}) {
+    return (
+        rectangulo1.posicion.y + rectangulo1.height >=
+        rectangulo2.posicion.y && rectangulo1.posicion.x + rectangulo1.width >=
+        rectangulo2.posicion.x && rectangulo1.posicion.x <= rectangulo2.posicion.x +
+        rectangulo2.width)
+}
+
+function terminarJuego() {
+    console.log("You lose")
+
+    setTimeout(() => {
+        jugador.opacidad = 0
+        partida.fin = true
+    }, 0)
+
+    setTimeout(() => {
+
+        partida.activo = false
+    }, 2000)
+
+    creacionParticulas({
+        object: jugador,
+        color: 'white',
+        desvanecido: true
+    })
+}
+let timerSpawn = 500
 
 function animate() {
-    if(!partida.activo) return
+    if (!partida.activo) return
     requestAnimationFrame(animate) //Este metodo nos permite dibujar continuamente el sprite del jugador
     c.fillStyle = 'black'
     c.fillRect(0, 0, canvas.width, canvas.height)
@@ -322,29 +353,16 @@ function animate() {
         } else proyectilEnemigo.update()
 
         //El proyectil enemigo golpea al jugador
-        if (proyectilEnemigo.posicion.y + proyectilEnemigo.height >=
-            jugador.posicion.y && proyectilEnemigo.posicion.x + proyectilEnemigo.width >=
-            jugador.posicion.x && proyectilEnemigo.posicion.x <= jugador.posicion.x +
-            jugador.width) {
-
-            setTimeout(() => {
-
-                partida.activo = false
-            }, 2000)
-
-            setTimeout(() => {
-
-                proyectilesEnemigo.splice(index, 1)
-                jugador.opacidad = 0
-                partida.fin = true
-            }, 0)
-
-            console.log("You lose")
-            creacionParticulas({
-                object: jugador,
-                color: 'white',
-                desvanecido: true
+        if (
+            colisionRectangular({
+                rectangulo1: proyectilEnemigo,
+                rectangulo2: jugador
             })
+        ) {
+
+            proyectilesEnemigo.splice(index, 1)
+            terminarJuego()
+
 
         }
     })
@@ -415,7 +433,14 @@ function animate() {
                     }, 0)
                 }
             })
-        })
+            //Elimina al jugador si un enemigo toca al jugador
+            if (
+                colisionRectangular({
+                    rectangulo1: enemigo,
+                    rectangulo2: jugador
+                })) 
+                terminarJuego()
+        })// termina el loop del grid.enemigo
     })
 
     if (keys.a.presionado && jugador.posicion.x >= 0) {
@@ -436,17 +461,24 @@ function animate() {
 
     //Spawn enemigos
     if (frames % intervalos === 0) {
-        grids.push(new Grid())
-        intervalos = Math.floor(Math.random() * 800 + 800)
-        frames = 0
+        console.log(timerSpawn)
         console.log(intervalos)
+        timerSpawn = timerSpawn < 0 ? 100 : timerSpawn
+        grids.push(new Grid())
+        intervalos = Math.floor(Math.random() * 500 + timerSpawn)
+        frames = 0
+        timerSpawn -= 100
     }
     frames++
 }
 
-animate()
+document.querySelector('#botonStart').addEventListener('click', () => {
+    document.querySelector('#pantallaInicio').style.display = 'none'
+    document.querySelector('#contenedorScore').style.display = 'block'
+    animate()
+})
 addEventListener('keydown', ({ key }) => {
-    if(partida.fin) return
+    if (partida.fin) return
 
     console.log(key)
     switch (key) {
