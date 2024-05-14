@@ -25,19 +25,17 @@ body{
 }
 
 .canvas-div{
+    position: relative;
     text-align: center;
-    /*background-image: url("../fondo_def.png");
-    background-repeat: repeat;
-    background-color: #3D3D3D;*/
-    width: 100%;
-    height: auto;
+    width: 1000px;
+    height: 500px;
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 0 auto;
-    
-}
 
+
+}
 canvas {
     border-width: 2px;
     border-style: outset;
@@ -48,29 +46,6 @@ canvas {
     z-index: 1;
 }
 
-.main-footer{
-
-    background-color: #2D2D2D;
-    width: 100%;
-    height: 10%;
-    z-index: 2;
-}
-
-#containsocials{
-    text-align: center;
-    display: block;
-    z-index: 1;
-}
-
-.socials{
-    max-width: 2.25%;
-}
-
-#otherlinks{
-    text-align: right;
-    display: block;
-    z-index: 1;
-}
 
 #myVideo{
     position: absolute;
