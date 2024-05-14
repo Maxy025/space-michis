@@ -1,44 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Space Michis</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Code+Latin:wght@100..700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Code+Latin:wght@100..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
-    <p
-    style="position: fixed; z-index: 10; 
-    color: white; padding-left: 18%; padding-top: 9%;"
     ><span>Score:</span> <span id="scoreEl">0</span></p>
 
-    <header class="nav-bar"> 
+    <header class="nav-bar">
         <div id="nav-container">
             <img src="img/logotipo.PNG" alt="">
         </div>
     </header>
-    
-    <div class="canvas-div">
+
+    <div style="position: relative; margin: 0 auto; justify-content: center; z-index: 1;" class="canvas-div">
+        <p id="contenedorScore" style="
+        position: absolute; 
+        z-index: 11; 
+        color: white; 
+        left: 10px;
+      top: 6px;
+      margin: 0;
+        display: none;">
+            <span>Score:</span>
+            <span id="scoreEl">0</span>
+        </p>
         <canvas>
         </canvas>
+        <div id="pantallaInicio" style="
+        position: absolute; 
+        top: 0; 
+        right: 0; 
+        bottom: 0; 
+        left: 0;  
+        z-index: 20; 
+        background: url('img/fondo-placeholder.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        ">
+            <div style="
+            display: flex;  
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center;
+            position: relative;">
+                <img src="img/start.png" style="cursor: pointer; width: 20%; height: 30%; margin: 10px;"
+                    alt="Boton Inicio" id="botonStart">
+                <img src="img/score.png" style="cursor: pointer; width: 20%; height: 30%; margin: 10px;"
+                    alt="Boton Inicio">
+                <img src="img/controls.png" style="cursor: pointer;  width: 20%; height: 30%; margin: 10px;"
+                    alt="Boton Inicio">
+            </div>
+        </div>
+
+        <!-- Pantala de reinicio-->
+        <div id="pantallaRestart" style="
+        position: absolute; 
+        top: 0; 
+        right: 0; 
+        bottom: 0; 
+        left: 25%;  
+        z-index: 20; 
+        background: url('img/gameover-screen.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        margin: 0 auto;
+        display: none;
+        align-items: center;
+        justify-content: center;">
+            <div style="
+            display: flex;  
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center;
+            position: relative;
+            right: 15%;
+            top: 25%;">
+                <img src="img/return.png" style="cursor: pointer; width: 20%; height: 30%; margin: 10px;"
+                    alt="Boton Restart" id="botonRestart">
+            </div>
+        </div>
     </div>
     <video autoplay muted loop id="myVideo">
         <source src="PARALLAX_background_test.mp4" type="video/mp4">
-      </video>
-    <footer class="main-footer">
-    <div id="containsocials">   
-        <p>¡Siguenos! <a href=""><img class="socials" src="img/instalogo.png" alt=""></a> <a href=""><img class="socials" src="img/youtube-svgrepo-com.png" alt=""></a></p>
-    </div>
+    </video>
 
-    <div id="otherlinks">
-        <p><a href="">Acerca</a> || <a href="">Terminos de uso</a></p>
-    </div>
-    </footer>
     <script src="js/game-main.js"></script>
 
-    
+
 </body>
+
 </html>
