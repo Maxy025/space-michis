@@ -1,11 +1,12 @@
 const scoreEl = document.querySelector('#scoreEl')
 const gameoverText = document.querySelector('#gameover_text')
+
+
+
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d') //Regresa el contexto del canvas, en este caso sera un contexto en 2d o en dos dimensiones
 canvas.width = 1000;
 canvas.height = 500;
-
-
 
 class Jugador { //Clase que contendra todos los atributos del jugador
     constructor() {
@@ -131,8 +132,6 @@ class ProyectilEnemigo {
     }
 }
 
-
-
 class Enemigo {
     constructor({ posicion }) {
         this.velocidad = {
@@ -184,7 +183,7 @@ class Enemigo {
             },
             velocidad: {
                 x: 0,
-                y: 1
+                y: 5
             }
         }))
     }
@@ -230,13 +229,15 @@ class Grid {
     }
 }
 
-const jugador = new Jugador() //Instanciamos al jugador
-const proyectiles = []
-const grids = []
-const proyectilesEnemigo = []
-const particulas = []
+let jugador = new Jugador() //Instanciamos al jugador
+let proyectiles = []
+let grids = []
+let proyectilesEnemigo = []
+let particulas = []
+let inputElement = null
+let inputValue = null
 
-const keys = {
+let keys = {
     a: {
         presionado: false
     },
@@ -256,20 +257,56 @@ let partida = {
 }
 let puntuacion = 0
 
-for (let i = 0; i < 100; i++) {
-    particulas.push(new Particulas({
-        posicion: {
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height
+function inicializar(){
+    jugador = new Jugador() //Instanciamos al jugador
+    proyectiles = []
+    grids = []
+    proyectilesEnemigo = []
+    particulas = []
+    inputElement = null
+    
+    keys = {
+        a: {
+            presionado: false
         },
-        velocidad: {
-            x: 0,
-            y: 0.3
+        d: {
+            presionado: false
         },
-        radio: Math.random() * 2,
-        color: 'white',
-    }))
+        space: {
+            presionado: false
+        }
+    }
+    
+    frames = 0
+    intervalos = Math.floor(Math.random() * 800 + 800)
+    partida = {
+        fin: false,
+        activo: true
+    }
+    puntuacion = 0
+
+    document.querySelector('#finalScore').innerHTML = puntuacion
+    document.querySelector('#scoreEl').innerHTML = puntuacion
+
+
+    for (let i = 0; i < 100; i++) {
+        particulas.push(new Particulas({
+            posicion: {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height
+            },
+            velocidad: {
+                x: 0,
+                y: 0.3
+            },
+            radio: Math.random() * 2,
+            color: 'white',
+        }))
+    }
+    
 }
+
+
 
 function creacionParticulas({ object, color, desvanecido }) {
     for (let i = 0; i < 15; i++) {
@@ -289,28 +326,47 @@ function creacionParticulas({ object, color, desvanecido }) {
     }
 }
 
-function colisionRectangular({
-    rectangulo1,
-    rectangulo2
-}) {
+function colisionRectangular({rectangulo1, rectangulo2}) {
     return (
         rectangulo1.posicion.y + rectangulo1.height >=
         rectangulo2.posicion.y && rectangulo1.posicion.x + rectangulo1.width >=
         rectangulo2.posicion.x && rectangulo1.posicion.x <= rectangulo2.posicion.x +
-        rectangulo2.width)
+        rectangulo2.width
+    )
 }
 
-function terminarJuego() {
+async function guardarDatosPartida(user, score) {
+    console.log(JSON.stringify({user, score}))
+  
+
+    const response = await fetch('http://localhost:3000/match', {
+      method: 'POST',   
+      headers: {    
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'                  
+      },
+      body: JSON.stringify({user, score})
+    });
+
+    return response
+}
+
+async function terminarJuego() {
     console.log("You lose")
 
+    //Cuando el jugador desaparece
     setTimeout(() => {
         jugador.opacidad = 0
         partida.fin = true
     }, 0)
 
+    //El juego se detiene
     setTimeout(() => {
-
         partida.activo = false
+        document.querySelector('#pantallaRestart').style.display = 'flex'
+        document.querySelector('#finalScore').innerHTML = puntuacion
+        document.querySelector('#nomUsuario').innerHTML = inputValue
+        
     }, 2000)
 
     creacionParticulas({
@@ -318,7 +374,14 @@ function terminarJuego() {
         color: 'white',
         desvanecido: true
     })
+
+    const response = await guardarDatosPartida(inputValue, puntuacion)
+
+    console.log("hola mundo")
+
+    console.log(response)
 }
+
 let timerSpawn = 500
 
 function animate() {
@@ -435,11 +498,13 @@ function animate() {
             })
             //Elimina al jugador si un enemigo toca al jugador
             if (
-                colisionRectangular({
-                    rectangulo1: enemigo,
-                    rectangulo2: jugador
-                })) 
+                    colisionRectangular({
+                        rectangulo1: enemigo,
+                        rectangulo2: jugador
+                    }) && !partida.fin
+            ) 
                 terminarJuego()
+
         })// termina el loop del grid.enemigo
     })
 
@@ -461,8 +526,6 @@ function animate() {
 
     //Spawn enemigos
     if (frames % intervalos === 0) {
-        console.log(timerSpawn)
-        console.log(intervalos)
         timerSpawn = timerSpawn < 0 ? 100 : timerSpawn
         grids.push(new Grid())
         intervalos = Math.floor(Math.random() * 500 + timerSpawn)
@@ -471,16 +534,50 @@ function animate() {
     }
     frames++
 }
+function obtenerUsuario() {
+    // Obtiene el elemento de input por su ID
+    inputElement = document.getElementById("inputUsuario");
+    // Obtiene el valor del input
+    inputValue = inputElement.value;
+    // Muestra el valor en la consola
+    console.log("El valor del input es: " + inputValue);
+
+}
 
 document.querySelector('#botonStart').addEventListener('click', () => {
     document.querySelector('#pantallaInicio').style.display = 'none'
+    document.querySelector('#cuadroUsuario').style.display = 'block'
+    inicializar()
+})
+
+
+document.querySelector('#botonUsuario').addEventListener('click', () => {
+    document.querySelector('#cuadroUsuario').style.display = 'none'
     document.querySelector('#contenedorScore').style.display = 'block'
     animate()
 })
+
+
+document.querySelector('#botonRestart').addEventListener('click', () => {
+    document.querySelector('#pantallaRestart').style.display = 'none'
+    inicializar()
+    animate()
+})
+
+document.querySelector('#botonSalir').addEventListener('click', () => {
+    document.querySelector('#pantallaInicio').style.display = 'flex'
+    document.querySelector('#contenedorScore').style.display = 'none'
+    document.querySelector('#pantallaRestart').style.display = 'none'
+})
+
+
+
+
+
+
 addEventListener('keydown', ({ key }) => {
     if (partida.fin) return
 
-    console.log(key)
     switch (key) {
         case 'a':
             keys.a.presionado = true
@@ -505,7 +602,6 @@ addEventListener('keydown', ({ key }) => {
 })
 
 addEventListener('keyup', ({ key }) => {
-    console.log(key)
     switch (key) {
         case 'a':
             keys.a.presionado = false
@@ -517,3 +613,6 @@ addEventListener('keyup', ({ key }) => {
             break
     }
 })
+
+
+
