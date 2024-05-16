@@ -12,7 +12,6 @@
 </head>
 
 <body>
-    ><span>Score:</span> <span id="scoreEl">0</span></p>
 
     <header class="nav-bar">
         <div id="nav-container">
@@ -56,11 +55,41 @@
             align-items: center;
             position: relative;">
                 <img src="img/start.png" style="cursor: pointer; width: 20%; height: 30%; margin: 10px;"
-                    alt="Boton Inicio" id="botonStart">
+                    id="botonStart">
                 <img src="img/score.png" style="cursor: pointer; width: 20%; height: 30%; margin: 10px;"
-                    alt="Boton Inicio">
+                    id="open-popup">
+                <div style="display: none;
+                    position: absolute;
+                    background: #B374AF;
+                    width: 450px;
+                    height: 450px;
+                    opacity: .9;
+                    border: 1px solid #ccc;
+                    padding: 10px;" id="popup-menu">
+                    <!-- Contenido del menú emergente -->
+                    <p>Menú emergente</p>
+                    <button onclick="cerrarMenuScore()">Cerrar</button>
+                </div>
                 <img src="img/controls.png" style="cursor: pointer;  width: 20%; height: 30%; margin: 10px;"
-                    alt="Boton Inicio">
+                    id="open-controles">
+                <div style="display: none;
+                    position: absolute;
+                    background: #B374AF;
+                    width: 450px;
+                    height: 450px;
+                    opacity: 1;
+                    border: 5px solid #6A378D;
+                    display: none;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 10px;" id="popup-controles">
+                    <!-- Contenido del menú emergente -->
+                    <img src="img/Controles.png" 
+                    style="cursor: pointer; margin-bottom: 20px; 
+                    width: 90%; height: auto;">
+                    <button style="width: 45%; margin: 0 auto;" onclick="cerrarMenuControles()">Cerrar</button>
+                </div>
             </div>
         </div>
 
@@ -85,10 +114,46 @@
             justify-content: center; 
             align-items: center;
             position: relative;
-            right: 15%;
-            top: 25%;">
+            right: 16%;
+            ">
+                <img src="img/gameover.png" style="cursor: pointer; width: 20%; height: 30%; margin: 10px;">
+                <span style="color: #6A378D;">Score:</span>
+                <h1 id="finalScore" style="color: #6A378D;">300</h1>
+                <h2 id="nomUsuario" style="color: #6A378D;">user</h2>
                 <img src="img/return.png" style="cursor: pointer; width: 20%; height: 30%; margin: 10px;"
-                    alt="Boton Restart" id="botonRestart">
+                    id="botonRestart">
+                <img src="img/exit.png" style="cursor: pointer; width: 20%; height: 30%; margin: 10px;"
+                     id="botonSalir">
+            </div>
+        </div>
+
+        <!--Cuadro usuario-->
+        <div id="cuadroUsuario" style="
+        position: absolute; 
+        top: 0; 
+        right: 0; 
+        bottom: 0; 
+        left: 0;  
+        z-index: 20; 
+        background: black;
+        background-size: contain;
+        background-repeat: no-repeat;
+        margin: 0 auto;
+        display: none;
+        align-items: center;
+        justify-content: center;">
+            <div style="
+            display: flex;  
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center;
+            position: relative;
+            top: 45%;
+            ">
+                <input type="text" id="inputUsuario" placeholder="Escribe algo aquí">
+                <button
+                    style="margin: 20px; color: white; background-color: #B374AF; border: 3px #6A378D; width: 100px; height: 40px;"
+                    id="botonUsuario" onclick="obtenerUsuario()">Aceptar</button>
             </div>
         </div>
     </div>
@@ -97,6 +162,7 @@
     </video>
 
     <script src="js/game-main.js"></script>
+    <script src="js/util.js"></script>
 
 
 </body>
