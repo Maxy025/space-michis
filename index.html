@@ -7,7 +7,7 @@
     <title>Space Michis</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Code+Latin:wght@100..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -20,9 +20,50 @@
     </header>
 
     <div style="position: relative; margin: 0 auto; justify-content: center; z-index: 1;" class="canvas-div">
+
+        <div id="contenedor-video" style="background-color: black; display: block;">
+
+            <video id="video" width="1000" height="500" style="display:none; z-index: 20; ">
+                <source src="SM_IntroLowFPS.mp4" type="video/mp4">
+                Tu navegador no soporta la reproducción de videos.
+            </video>
+
+            <button id="playButton" style="position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20; /* Coloca el botón encima del canvas */
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 3px solid #6A378D;
+            background-color: #A45AA0; 
+            color: white;
+            width: 45%; 
+            height: 10%;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;">Iniciar</button>
+
+            <button id="skipButtonDuringVideo" style="position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 20; /* Coloca el botón encima del canvas */
+            padding: 10px 20px;
+            font-size: 16px;
+            border: 3px solid #6A378D;
+            background-color: #A45AA0; 
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none; /* Oculta el botón inicialmente */">Saltar</button>
+
+        </div>
+
         <p id="contenedorScore" style="
         position: absolute; 
-        z-index: 11; 
+        z-index: 21; 
         color: white; 
         left: 10px;
       top: 6px;
@@ -33,6 +74,9 @@
         </p>
         <canvas>
         </canvas>
+
+
+
         <div id="pantallaInicio" style="
         position: absolute; 
         top: 0; 
@@ -44,7 +88,7 @@
         background-size: contain;
         background-repeat: no-repeat;
         margin: 0 auto;
-        display: flex;
+        display: none;
         align-items: center;
         justify-content: center;
         ">
@@ -63,12 +107,20 @@
                     background: #B374AF;
                     width: 450px;
                     height: 450px;
-                    opacity: .9;
+                    opacity: 1;
                     border: 1px solid #ccc;
-                    padding: 10px;" id="popup-menu">
+                    padding: 10px;" id="popup-menu" class="popup-menu">
                     <!-- Contenido del menú emergente -->
-                    <p>Menú emergente</p>
-                    <button onclick="cerrarMenuScore()">Cerrar</button>
+                    <button style="
+                    width: 45%; 
+                    height: 10%;
+                    background-color: #A45AA0; 
+                    color: #ffffff;
+                    margin: 0 auto; 
+                    font-size: 16px;
+                    cursor: pointer;
+                    border: 3px solid #6A378D; 
+                    border-radius: 4px;" onclick="cerrarMenuScore()">Cerrar</button>
                 </div>
                 <img src="img/controls.png" style="cursor: pointer;  width: 20%; height: 30%; margin: 10px;"
                     id="open-controles">
@@ -76,7 +128,7 @@
                     position: absolute;
                     background: #B374AF;
                     width: 450px;
-                    height: 450px;
+                    height: 400px;
                     opacity: 1;
                     border: 5px solid #6A378D;
                     display: none;
@@ -85,10 +137,18 @@
                     align-items: center;
                     padding: 10px;" id="popup-controles">
                     <!-- Contenido del menú emergente -->
-                    <img src="img/Controles.png" 
-                    style="cursor: pointer; margin-bottom: 20px; 
+                    <img src="img/Controles.png" style=" margin-bottom: 20px; 
                     width: 90%; height: auto;">
-                    <button style="width: 45%; margin: 0 auto;" onclick="cerrarMenuControles()">Cerrar</button>
+                    <button style="
+                    width: 45%; 
+                    height: 10%;
+                    background-color: #A45AA0; 
+                    color: #ffffff;
+                    margin: 0 auto; 
+                    font-size: 16px;
+                    cursor: pointer;
+                    border: 3px solid #6A378D; 
+                    border-radius: 4px;" onclick="cerrarMenuControles()">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -122,8 +182,7 @@
                 <h2 id="nomUsuario" style="color: #6A378D;">user</h2>
                 <img src="img/return.png" style="cursor: pointer; width: 20%; height: 30%; margin: 10px;"
                     id="botonRestart">
-                <img src="img/exit.png" style="cursor: pointer; width: 20%; height: 30%; margin: 10px;"
-                     id="botonSalir">
+                <img src="img/exit.png" style="cursor: pointer; width: 20%; height: 30%; margin: 10px;" id="botonSalir">
             </div>
         </div>
 
@@ -152,7 +211,7 @@
             ">
                 <input type="text" id="inputUsuario" placeholder="Escribe algo aquí">
                 <button
-                    style="margin: 20px; color: white; background-color: #B374AF; border: 3px #6A378D; width: 100px; height: 40px;"
+                    style="margin: 20px; color: white; cursor: pointer; background-color: #A45AA0; border: 3px #6A378D; width: 100px; height: 40px;"
                     id="botonUsuario" onclick="obtenerUsuario()">Aceptar</button>
             </div>
         </div>
@@ -160,7 +219,11 @@
     <video autoplay muted loop id="myVideo">
         <source src="PARALLAX_background_test.mp4" type="video/mp4">
     </video>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"
+        integrity="sha512-xi/RZRIF/S0hJ+yJJYuZ5yk6/8pCiRlEXZzoguSMl+vk2i3m6UjUO/WcZ11blRL/O+rnj94JRGwt/CHbc9+6EA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+        </script>
+    <script src="js/audio.js"></script>
     <script src="js/game-main.js"></script>
     <script src="js/util.js"></script>
 
