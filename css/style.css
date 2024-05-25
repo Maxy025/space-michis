@@ -1,7 +1,8 @@
 *{
     padding: 0;
     margin: 0;
-    font-family: "M PLUS Code Latin", monospace;
+    font-family: "Press Start 2P", system-ui;
+    font-weight: 100;
 }
 body{
     margin: 0;
@@ -46,6 +47,51 @@ canvas {
     z-index: 1;
 }
 
+.popup-menu {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .popup-menu p {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #6A378D;
+    border-left: 4px solid #B374AF;
+    border-radius: 4px;
+    color: #ffffff;
+    font-size: 10px;
+  }
+
+  .score-entry .position {
+    flex: 0 0 30px;
+    font-weight: bold;
+  }
+
+
+  #botonStart{
+    transform: translate(0);
+  }
+  #botonStart:hover{
+    transform: translate(0, -3px);
+  }
+
+  #open-popup{
+    transform: translate(0);
+  }
+  #open-popup:hover{
+    transform: translate(0, -3px);
+  }
+  #open-controles{
+    transform: translate(0);
+  }
+  #open-controles:hover{
+    transform: translate(0, -3px);
+  }
 
 #myVideo{
     position: absolute;
@@ -54,4 +100,20 @@ canvas {
     min-width: 100%; 
     min-height: 50%;
     z-index: 0;
+}
+
+
+#intro-container {
+  display: block;
+  position: absolute;
+    right: 0;
+    bottom: 0;
+    min-width: 100%; 
+    min-height: 50%;
+    z-index: 21;
+}
+
+
+#playButton{
+  
 }
