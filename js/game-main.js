@@ -1,12 +1,18 @@
 const scoreEl = document.querySelector('#scoreEl')
 const gameoverText = document.querySelector('#gameover_text')
 
+const video = document.getElementById('video');
+const playButton = document.getElementById('playButton');
+const skipButtonDuringVideo = document.getElementById('skipButtonDuringVideo');
 
+const inicio = document.querySelector('#pantallaInicio')
 
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d') //Regresa el contexto del canvas, en este caso sera un contexto en 2d o en dos dimensiones
 canvas.width = 1000;
 canvas.height = 500;
+
+
 
 class Jugador { //Clase que contendra todos los atributos del jugador
     constructor() {
@@ -176,6 +182,7 @@ class Enemigo {
 
 
     shoot(enemigoProyectil) {
+        audio.enemyShoot.play()
         enemigoProyectil.push(new ProyectilEnemigo({
             posicion: {
                 x: this.posicion.x + this.width / 2,
@@ -257,6 +264,43 @@ let partida = {
 }
 let puntuacion = 0
 
+
+playButton.addEventListener('click', () => {
+    video.play().catch(error => {
+        console.error("Error al intentar reproducir el video:", error);
+    });
+    playButton.style.display = 'none'; // Ocultar el botón de reproducir después de hacer clic
+    skipButtonDuringVideo.style.display = 'block'; // Mostrar el botón de saltar durante el video
+});
+
+skipButtonDuringVideo.addEventListener('click', () => {
+    video.pause();
+    c.clearRect(0, 0, canvas.width, canvas.height); // Limpiar el canvas
+    skipButtonDuringVideo.style.display = 'none'; // Ocultar el botón de saltar durante el video
+    document.querySelector('#pantallaInicio').style.display = 'flex'
+    console.log("Animación saltada");
+});
+
+video.addEventListener('play', () => {
+    const drawVideoOnCanvas = () => {
+        if (!video.paused && !video.ended) {
+            c.drawImage(video, 0, 0, canvas.width, canvas.height);
+            requestAnimationFrame(drawVideoOnCanvas);
+        } else {
+            c.clearRect(0, 0, canvas.width, canvas.height);
+            skipButtonDuringVideo.style.display = 'none'; // Ocultar el botón de saltar cuando el video termina
+        }
+    };
+    drawVideoOnCanvas();
+});
+
+video.addEventListener('ended', () => {
+    // Limpiar el canvas una vez que el video ha terminado
+    c.clearRect(0, 0, canvas.width, canvas.height);
+    skipButtonDuringVideo.style.display = 'none'; // Ocultar el botón de saltar cuando el video termina
+    document.querySelector('#pantallaInicio').style.display = 'flex'
+    console.log("Video finalizado");
+});
 function inicializar(){
     jugador = new Jugador() //Instanciamos al jugador
     proyectiles = []
@@ -353,7 +397,9 @@ async function guardarDatosPartida(user, score) {
 
 async function terminarJuego() {
     console.log("You lose")
-
+    audio.gameover_alt.play()
+    audio.gameover.play()
+    audio.backgroundMusic.stop()
     //Cuando el jugador desaparece
     setTimeout(() => {
         jugador.opacidad = 0
@@ -383,10 +429,20 @@ async function terminarJuego() {
 }
 
 let timerSpawn = 500
-
+let fps = 120
+let fpsInterval = 1000/fps
+let msPrev = window.performance.now()
 function animate() {
     if (!partida.activo) return
     requestAnimationFrame(animate) //Este metodo nos permite dibujar continuamente el sprite del jugador
+    
+    const msNow = window.performance.now()
+    const tiempoTranscurrido = msNow - msPrev
+
+    if(tiempoTranscurrido < fpsInterval) return
+
+    msPrev = msNow - (tiempoTranscurrido % fpsInterval)
+
     c.fillStyle = 'black'
     c.fillRect(0, 0, canvas.width, canvas.height)
     jugador.update()//Lo dibujamos en el canvas
@@ -480,6 +536,7 @@ function animate() {
                                 object: enemigo,
                                 desvanecido: true
                             })
+                            audio.explosion.play()
                             grid.enemigos.splice(i, 1)
                             proyectiles.splice(j, 1)
                             if (grid.enemigos.length > 0) {
@@ -545,6 +602,8 @@ function obtenerUsuario() {
 }
 
 document.querySelector('#botonStart').addEventListener('click', () => {
+    audio.seleccionOpcion.play()
+    audio.backgroundMusic.play()
     document.querySelector('#pantallaInicio').style.display = 'none'
     document.querySelector('#cuadroUsuario').style.display = 'block'
     inicializar()
@@ -552,6 +611,7 @@ document.querySelector('#botonStart').addEventListener('click', () => {
 
 
 document.querySelector('#botonUsuario').addEventListener('click', () => {
+    audio.seleccionOpcion.play()
     document.querySelector('#cuadroUsuario').style.display = 'none'
     document.querySelector('#contenedorScore').style.display = 'block'
     animate()
@@ -559,12 +619,18 @@ document.querySelector('#botonUsuario').addEventListener('click', () => {
 
 
 document.querySelector('#botonRestart').addEventListener('click', () => {
+    audio.seleccion.play()
+    audio.backgroundMusic.play()
+    audio.gameover.stop()
     document.querySelector('#pantallaRestart').style.display = 'none'
     inicializar()
     animate()
 })
 
 document.querySelector('#botonSalir').addEventListener('click', () => {
+    audio.seleccionOpcion.play()
+    audio.backgroundMusic.stop()
+    audio.gameover.stop()
     document.querySelector('#pantallaInicio').style.display = 'flex'
     document.querySelector('#contenedorScore').style.display = 'none'
     document.querySelector('#pantallaRestart').style.display = 'none'
@@ -586,6 +652,7 @@ addEventListener('keydown', ({ key }) => {
             keys.d.presionado = true
             break
         case ' ':
+            audio.shoot.play()
             if (keys.space.presionado) return
             proyectiles.push(new Proyectil({
                 posicion: {
